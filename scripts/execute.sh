@@ -97,7 +97,7 @@ JOBS=$(curl -s \
   $CONTENT_HEADER \
   -X POST \
   "${CURL_DATA[@]}" \
-  "https://api.virtuoso.qa/api/plans/executions/$PLAN_ID/execute?envelope=false")
+  "https://api-uk.virtuoso.qa/api/plans/executions/$PLAN_ID/execute?envelope=false")
 
 if [ "$?" != "0" ] || [ -z "$JOBS" ] || [ "$JOBS" == "null" ]; then
   echo "Failed to launch plan execution."
@@ -125,7 +125,7 @@ for JOB_ID in $JOB_IDS; do
   echo "Polling job $JOB_ID..."
   RUNNING=true
   while $RUNNING; do
-    JOB=$(curl -s --header "Authorization: Bearer $VIRTUOSO_TOKEN" --header "X-Virtuoso-Client-Name: CICD" "https://api.virtuoso.qa/api/executions/$JOB_ID/status?envelope=false" || echo "{}")
+    JOB=$(curl -s --header "Authorization: Bearer $VIRTUOSO_TOKEN" --header "X-Virtuoso-Client-Name: CICD" "https://api-uk.virtuoso.qa/api/executions/$JOB_ID/status?envelope=false" || echo "{}")
     JOB_STATUS=$(echo "$JOB" | jq -r .status)
     OUTCOME=$(echo "$JOB" | jq -r .outcome)
 
@@ -150,7 +150,7 @@ done
 echo "Exporting test results..."
 RESULTS_FILE="plan_execution_report.json"
 
-curl -s --header "Authorization: Bearer $TOKEN" --header "X-Virtuoso-Client-Name: CICD" "https://api.virtuoso.qa/api/plans/executions/status/$PLAN_EXECUTION_ID?envelope=false" | jq -r '.' > "$RESULTS_FILE"
+curl -s --header "Authorization: Bearer $TOKEN" --header "X-Virtuoso-Client-Name: CICD" "https://api-uk.virtuoso.qa/api/plans/executions/status/$PLAN_EXECUTION_ID?envelope=false" | jq -r '.' > "$RESULTS_FILE"
 
 echo "Exported the report as \"$RESULTS_FILE\""
 
