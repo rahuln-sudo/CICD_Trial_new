@@ -32,23 +32,17 @@ jobs:
       - name: Run Virtuoso plan
         run: scripts/execute.sh
 
-      - name: Upload report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: execution-report
-          path: plan_execution_report.json
-
-          # ✅ Create reports folder and move file
       - name: Move report to reports folder
+        if: always()
         run: |
           mkdir -p reports
-          mv plan_execution_report.json reports/
+          if [ -f plan_execution_report.json ]; then
+            mv plan_execution_report.json reports/
+          fi
 
-      # ✅ Upload from reports folder
       - name: Upload report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: execution-report
+          name: execution-report-${{ inputs.plan_id }}-${{ github.run_attempt }}
           path: reports/plan_execution_report.json
